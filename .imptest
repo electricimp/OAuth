@@ -1,0 +1,14 @@
+{
+    "modelId": "pSrGKzgpqPO6" /* oauth_test */,
+    "devices": [
+        "23349c7838a609ee" /* */
+    ],
+    "agentFile": "tests/inc.agent.nut",
+    "deviceFile": false,
+    "stopOnFailure": false,
+    "timeout": 300,
+    "tests": [
+        "*.test.nut",
+        "tests/**/*.test.nut"
+    ]
+}
