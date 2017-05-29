@@ -28,11 +28,11 @@ class GooglePubSubJWTAuth extends ImpTestCase {
 
     auth = null;
 
-    static ISS = "#{env:_ISS_}";
-    static SECRET_KEY = "#{env:_SECRET_KEY_}";
+    static ISS = "@{_ISS_}";
+    static SECRET_KEY = "@{_SECRET_KEY_}";
 
     function setUp() {
-        local lambda = AWSLambda("#{env:LAMBDA_REGION}", "#{env:LAMBDA_ACCESS_KEY_ID}", "#{env:LAMBDA_ACCESS_KEY}");
+        local lambda = AWSLambda("@{LAMBDA_REGION}", "@{LAMBDA_ACCESS_KEY_ID}", "@{LAMBDA_ACCESS_KEY}");
 
         local config = {
             "iss"         : ISS,

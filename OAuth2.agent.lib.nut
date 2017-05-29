@@ -449,7 +449,7 @@ class OAuth2.DeviceFlow {
              }
 
              if (_isBusy()) {
-                 _log("Resetting ongoing session with token id:" + _currentTokenId);
+                 _log("Resetting ongoing session with token id: " + _currentTokenId);
                  // incrementing the token # to cancel the previous one
                  _currentTokenId++;
              }
@@ -487,7 +487,7 @@ class OAuth2.DeviceFlow {
         //
         function _requestCode(tokenCallback, notifyUserCallback) {
             if (_isBusy()) {
-                 _log("Resetting ongoing session with token id:" + _currentTokenId);
+                 _log("Resetting ongoing session with token id: " + _currentTokenId);
                  _reset();
             }
 

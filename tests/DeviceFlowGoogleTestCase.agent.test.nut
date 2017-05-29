@@ -28,8 +28,8 @@ class DeviceFlowGoogleTestCase extends ImpTestCase {
 
     auth = null;
 
-    static ID = "#{env:CLIENT_ID}";
-    static SECRET = "#{env:CLIENT_SECRET}";
+    static ID = "@{CLIENT_ID}";
+    static SECRET = "@{CLIENT_SECRET}";
 
     function setUp() {
         local config = {
@@ -82,7 +82,7 @@ class DeviceFlowGoogleTestCase extends ImpTestCase {
         //TODO: goto url, parse html and  post the code
         //works as partially manual test now, fully automated scenario looks too fragile
         info("Need user action at " + url + " with code " + code);
-        if ("#{env:OS}" == "Windows_NT") {
+        if ("@{OS}" == "Windows_NT") {
             // windows
             this.runCommand("start " + url);
         } else {
