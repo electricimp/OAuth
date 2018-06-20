@@ -40,7 +40,7 @@ by pressing **Create key** from the dropdown menu of the selected service accoun
 
 ### Set Up The Agent Code ###
 
-Copy and paste [this agent code](JWTProfile.agent.nut) into the impCentral code editor’s left-hand pane.
+Copy and paste [this agent code](JWTGooglePubSub.agent.nut) into the impCentral code editor’s left-hand pane.
 
 Now set the example code configuration parameters with values retrieved during the previous steps:
 
