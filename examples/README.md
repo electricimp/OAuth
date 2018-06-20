@@ -82,7 +82,7 @@ To customize the page that users see while authorizing your application, go to t
 
 ### Set Up The Agent Code ###
 
-Copy this [example agent code](DeviceFlow.agent.nut) and paste it into the impCentral code editor’s left-hand pane.
+Copy this [example agent code](DeviceFlowGoogle.agent.nut) and paste it into the impCentral code editor’s left-hand pane.
 
 Now set the example code configuration parameters with values retrieved during the previous steps:
 
