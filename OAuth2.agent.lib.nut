@@ -40,7 +40,7 @@ enum Oauth2DeviceFlowState {
 
 // The class that introduces OAuth2 namespace
 class OAuth2 {
-    static VERSION = "1.0.0";
+    static VERSION = "2.0.0";
 }
 
 // The class that represents OAuth 2.0 authorization flow
@@ -68,10 +68,6 @@ class  OAuth2.JWTProfile {
         // Access token death time
         _expiresAt = 0;
 
-        // Instance of signer that supports RS256
-        // Should be AWSLambda until the function is embedded to agent library
-        _signer = null;
-
         // Debug mode, records non-error events
         _debug = true;
 
@@ -85,8 +81,6 @@ class  OAuth2.JWTProfile {
         //                      iss         - JWT issuer
         //                      scope       - authorization scope
         //                      jwtSignKey  - JWT sign secret key
-        //                      rs256signer - instance of AWSLambda with installed RSALambda function
-        //                                    https://github.com/electricimp/AWSLambda/blob/master/examples/RSACrypto#setting-up-the-aim-user
         //                      sub         - [optional] the subject of the JWT
         constructor(provider, user) {
              if (!("tokenHost" in provider) ) {
@@ -96,9 +90,7 @@ class  OAuth2.JWTProfile {
 
              if (!("iss" in user)    ||
                  !("scope" in  user) ||
-                 !("jwtSignKey" in user) ||
-                 !("rs256signer" in user) ||
-                 !(typeof user.rs256signer != AWSLambda)) {
+                 !("jwtSignKey" in user)) {
                 throw "Invalid user config";
             }
 
@@ -112,7 +104,6 @@ class  OAuth2.JWTProfile {
 
             _scope = user.scope;
             _jwtSignKey = user.jwtSignKey;
-            _signer = user.rs256signer;
         }
 
         // Returns access token string nonblocking way.
@@ -161,61 +152,53 @@ class  OAuth2.JWTProfile {
             local body = _urlsafe(http.base64encode(http.jsonencode(claimset)));
 
             local context = {
-                "header"        : header,
-                "body"          : body,
-                "client"        : this,
-                "userCallback"  : tokenReadyCallback
+                "client": this,
+                "userCallback": tokenReadyCallback
             };
 
-            // Make the signing request for Lambda
-            local signrequest = {
-                "privatekey" : _jwtSignKey,
-                "message"    : header + "." + body
-            };
+            crypto.sign(crypto.RSASSA_PKCS1_SHA256, header + "." + body, _decodePem(_jwtSignKey),
+                function(err, sig) {
+                    if (err) {
+                        server.error(err);
+                        return;
+                    }
 
-            _log("Calling lambda...");
-            _signer.invoke({
-                "payload" : signrequest,
-                "functionName" : "RSALambda"
-            }, _doSignerResponse.bindenv(context));
+                    local signature = _urlsafe(http.base64encode(sig));
+                    local oauthreq = http.urlencode({
+                        "grant_type" : OAUTH2_JWT_GRANT_TYPE,
+                        "assertion"  : (header + "." + body + "." + signature)
+                    });
+
+                    server.log("Making a request to the host: " + _tokenHost);
+                    server.log((header + "." + body + "." + signature));
+
+                    // Post, get the token
+                    local request = http.post(_tokenHost, {}, oauthreq);
+                    _log("Calling token host");
+                    request.sendasync(_doTokenCallback.bindenv(context));
+
+                }.bindenv(this)
+            );
         }
 
         // -------------------- PRIVATE METHODS -------------------- //
 
-        // Processes the response from AWSLambda signer
-        // Parameters:
-        //          result  - httpresponse instance
-        //
-        // Returns: Nothing
-        function _doSignerResponse(result) {
-            if (result.statuscode == 200) {
-                local payload = http.jsondecode(result.body);
-                if ("errorMessage" in payload) {
-                    client._error(payload.errorMessage);
-                } else {
-                    // We got the signature, build the OAuth request
-                    local signature = client._urlsafe(payload.signature);
-                    local oauthreq = http.urlencode({
-                        "grant_type" : OAUTH2_JWT_GRANT_TYPE,
-                        "assertion"  : (header+"."+body+"."+signature)
-                    });
-
-                    // Post, get the token
-                    local request = http.post(client._tokenHost, {}, oauthreq);
-                    client._log("Calling token host");
-                    request.sendasync(client._doTokenCallback.bindenv(this));
-                }
-            } else {
-                // Work around the curl 56 by immediately retrying
-                if (result.statuscode == 56) {
-                    client._log("Retrying due to 56");
-                    client.acquireAccessToken(userCallback);
-                } else {
-                    local mess = "Lambda returned code "+result.statuscode;
-                    client._error(mess);
-                    userCallback(null, mess);
-                }
+        // Remove the armor, concatenate the lines, and base64 decode the text.
+        function _decodePem(str) {
+            local lines = split(str, "\n");
+            // We really ought to iterate over the array until we find a starting line,
+            // and then look for the matching ending line.
+            if ((lines[0] == "-----BEGIN PRIVATE KEY-----"
+                    && lines[lines.len() - 1] == "-----END PRIVATE KEY-----") ||
+                (lines[0] == "-----BEGIN RSA PRIVATE KEY-----"
+                    && lines[lines.len() - 1] == "-----END RSA PRIVATE KEY-----") ||
+                (lines[0] == "-----BEGIN PUBLIC KEY-----"
+                    && lines[lines.len() - 1] == "-----END PUBLIC KEY-----"))
+            {
+                local all = lines.slice(1, lines.len() - 1).reduce(@(a, b) a + b);
+                return http.base64decode(all);
             }
+            return null;
         }
 
         // Processes response from OAuth provider
@@ -346,7 +329,7 @@ class OAuth2.DeviceFlow {
         _grantType       = OAUTH2_DEVICE_FLOW_GRANT_TYPE;
 
         // Debug mode, records non-error events
-        _debug          = false;
+        _debug          = true;
 
         // Client constructor.
         // Parameters:

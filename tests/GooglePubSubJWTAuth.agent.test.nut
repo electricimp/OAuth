@@ -26,22 +26,19 @@ const TOKEN_VERIFICATION_URL = "https://www.googleapis.com/oauth2/v3/tokeninfo";
 
 class GooglePubSubJWTAuth extends ImpTestCase {
 
-    auth = null;
+    _auth = null;
 
-    static ISS = "@{_ISS_}";
-    static SECRET_KEY = "@{_SECRET_KEY_}";
+    static ISS = "@{GOOGLE_ISS}";
+    static SECRET_KEY = "@{GOOGLE_SECRET_KEY}";
 
     function setUp() {
-        local lambda = AWSLambda("@{LAMBDA_REGION}", "@{LAMBDA_ACCESS_KEY_ID}", "@{LAMBDA_ACCESS_KEY}");
-
         local config = {
             "iss"         : ISS,
             "jwtSignKey"  : SECRET_KEY,
-            "scope"       : "https://www.googleapis.com/auth/pubsub",
-            "rs256signer" : lambda
+            "scope"       : "https://www.googleapis.com/auth/pubsub"
         };
 
-        auth = OAuth2.JWTProfile.Client(OAuth2.DeviceFlow.GOOGLE, config);
+        _auth = OAuth2.JWTProfile.Client(OAuth2.DeviceFlow.GOOGLE, config);
     }
 
     function verifyToken(token, success, failure, doRefresh = false) {
@@ -49,7 +46,7 @@ class GooglePubSubJWTAuth extends ImpTestCase {
             server.log("VerifyTokenTest: checking token");
             local query = http.urlencode({"access_token" : token });
             server.log("VerifyTokenTest: token query is: " + query);
-            http.post(TOKEN_VERIFICATION_URL + "?"+query, {}, "")
+            http.post(TOKEN_VERIFICATION_URL + "?" + query, {}, "")
                 .sendasync(function (resp) {
                     local status = resp.statuscode;
                     server.log("VerifyTokenTest: status is: " + status);
@@ -59,7 +56,7 @@ class GooglePubSubJWTAuth extends ImpTestCase {
                         failure("Verification server returns NOT OK");
                     } else {
                         if (doRefresh) {
-                            local res = auth.refreshAccessToken(function(token, err) {
+                            local res = _auth.acquireAccessToken(function(token, err) {
                                 server.log("VerifyTokenTest_refresh: callback involved");
                                 if (null != err) {
                                     server.log("VerifyTokenTest_refresh: err != null: " + err);
@@ -83,12 +80,12 @@ class GooglePubSubJWTAuth extends ImpTestCase {
     function testAcquireAndVerifyToken() {
         return Promise(function (success, failure) {
 
-            local token = auth.getValidAccessTokenOrNull();
+            local token = _auth.getValidAccessTokenOrNull();
             if (null != token) {
                 server.log("VerifyTokenTest: it was not null!. something went wrong!");
                 failure("Initial token is not null");
             } else {
-                local err = auth.acquireAccessToken(function(token, err){
+                local err = _auth.acquireAccessToken(function(token, err) {
                     server.log("VerifyTokenTest: callback involved");
                     if (null != err) {
                         server.log("VerifyTokenTest: err != null: " + err);

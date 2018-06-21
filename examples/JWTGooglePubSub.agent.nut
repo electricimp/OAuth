@@ -22,23 +22,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-#require "AWSRequestV4.class.nut:1.0.2"
-#require "AWSLambda.agent.lib.nut:1.0.0"
 //@include "../OAuth2.agent.lib.nut"
-#require "OAuth2.agent.lib.nut:1.0.0"
+#require "OAuth2.agent.lib.nut:2.0.0"
 
 const GOOGLE_ISS = "";
 const GOOGLE_SECRET_KEY = "";
-const AWS_LAMBDA_REGION = "";
-const AWS_ACCESS_KEY_ID = "";
-const AWS_SECRET_ACCESS_KEY = "";
-local lambda = AWSLambda(AWS_LAMBDA_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY);
 
 local config = {
     "iss"         : GOOGLE_ISS,
     "jwtSignKey"  : GOOGLE_SECRET_KEY,
-    "scope"       : "https://www.googleapis.com/auth/pubsub",
-    "rs256signer" : lambda
+    "scope"       : "https://www.googleapis.com/auth/pubsub"
 };
 
 // Initializing client with provided Google Firebase config

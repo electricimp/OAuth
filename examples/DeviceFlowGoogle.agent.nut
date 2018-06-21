@@ -22,7 +22,7 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-#require "OAuth2.agent.lib.nut:1.0.0"
+#require "OAuth2.agent.lib.nut:2.0.0"
 
 const CLIENT_ID = "";
 const CLIENT_SECRET = "";
