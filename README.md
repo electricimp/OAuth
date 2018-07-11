@@ -11,8 +11,6 @@ The library exposes retrieved access tokens for applications and hides provider-
 
 **To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.0"` **to the top of your agent code.**
 
-**Note** The current OAuth library implementation uses the imp API’s [**crypto**](https://developer.electricimp.com/api/crypto) methods, which are **supported on developer devices’ agents only**. Support for production devices’ agents is coming. If you need to test this feature in production, please contact [Electric Imp support](https://support.electricimp.com/access).
-
 ## OAuth2.JWTProfile.Client ##
 
 This class implements an OAuth 2.0 client flow using a JSON Web Token (JWT) as the means for requesting access tokens and for client authentication.
