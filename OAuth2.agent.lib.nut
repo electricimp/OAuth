@@ -69,7 +69,7 @@ class  OAuth2.JWTProfile {
         _expiresAt = 0;
 
         // Debug mode, records non-error events
-        _debug = true;
+        _debug = false;
 
         // Client constructor.
         // Parameters:
@@ -159,7 +159,7 @@ class  OAuth2.JWTProfile {
             crypto.sign(crypto.RSASSA_PKCS1_SHA256, header + "." + body, _decodePem(_jwtSignKey),
                 function(err, sig) {
                     if (err) {
-                        server.error(err);
+                        _error(err);
                         return;
                     }
 
@@ -169,8 +169,8 @@ class  OAuth2.JWTProfile {
                         "assertion"  : (header + "." + body + "." + signature)
                     });
 
-                    server.log("Making a request to the host: " + _tokenHost);
-                    server.log((header + "." + body + "." + signature));
+                    _log("Making a request to the host: " + _tokenHost);
+                    _log((header + "." + body + "." + signature));
 
                     // Post, get the token
                     local request = http.post(_tokenHost, {}, oauthreq);
@@ -215,7 +215,7 @@ class  OAuth2.JWTProfile {
             } else {
                 // Error getting token
                 local mess = "Error getting token: " + resp.statuscode + " " + resp.body;
-                client._error(mess);
+                client._log(mess);
                 userCallback(null, mess);
             }
         }
@@ -513,7 +513,7 @@ class OAuth2.DeviceFlow {
                 local respData = http.jsondecode(resp.body);
                 if (null != _extractPollData(respData)) {
                     _reset();
-                    _error("Something went wrong during code request: " + resp.body);
+                    _log("Something went wrong during code request: " + resp.body);
                     cb(null, resp.body);
                     return;
                 }
@@ -527,7 +527,7 @@ class OAuth2.DeviceFlow {
             } catch (error) {
                 _reset();
                 local msg = "Provider data processing error: " + error;
-                _error(msg);
+                _log(msg);
                 cb(null, msg);
             }
         }
@@ -547,15 +547,15 @@ class OAuth2.DeviceFlow {
                 local respData = http.jsondecode(resp.body);
                 if (null != _extractToken(respData)) {
                     _reset();
-                    _error("Something went wrong during refresh: " + resp.body);
+                    _log("Something went wrong during refresh: " + resp.body);
                     cb(null, resp.body);
                 } else {
                     cb(_accessToken, null);
                 }
             } catch (error) {
                 _reset();
-                local msg = "Token refreshing error: " + error
-                _error(msg);
+                local msg = "Token refreshing error: " + error;
+                _log(msg);
                 cb(null, msg);
             }
         }
@@ -579,7 +579,7 @@ class OAuth2.DeviceFlow {
             if (date().time > _expiresAt) {
                 _reset();
                 local msg = "Token acquiring timeout";
-                _error(msg);
+                _log(msg);
                 cb(null, msg);
                 return msg;
             }
@@ -642,14 +642,14 @@ class OAuth2.DeviceFlow {
                     }
                 } else {
                     local msg = "Unexpected server response code:" + statusCode;
-                    _error(msg);
+                    _log(msg);
                     _reset();
                     cb(null, msg);
                 }
             } catch (error) {
                 local msg = "General server poll error: " + error;
                 _reset();
-                _error(msg);
+                _log(msg);
                 cb(null, msg);
             }
         }
@@ -790,11 +790,6 @@ class OAuth2.DeviceFlow {
                 _refreshToken    = null;
                 _accessToken     = null;
             }
-        }
-
-        // Records error event
-        function _error(txt) {
-            server.error("[OAuth2DeviceFlow] " + txt);
         }
 
         // Records non-error event
