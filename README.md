@@ -9,7 +9,7 @@ This library provides OAuth 2.0 authentication and authorization flows. It suppo
 
 The library exposes retrieved access tokens for applications and hides provider-specific operations, including the renewal of expired tokens.
 
-**To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.0"` **to the top of your agent code.**
+**To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.1"` **to the top of your agent code.**
 
 ## OAuth2.JWTProfile.Client ##
 
@@ -38,7 +38,7 @@ The second parameter, *userSettings*, defines a table with user- and application
 
 ```squirrel
 // OAuth 2.0 library
-#require "OAuth2.agent.lib.nut:2.0.0"
+#require "OAuth2.agent.lib.nut:2.0.1"
 
 // Substitute with real values
 const GOOGLE_ISS        = "rsalambda@quick-cacao-168121.iam.gserviceaccount.com";
@@ -113,7 +113,7 @@ if (token) {
 
 ### isTokenValid() ###
 
-This method checks if the access token is valid by comparing its expiry time with current time. 
+This method checks if the access token is valid by comparing its expiry time with current time.
 
 #### Return Value ####
 
@@ -128,7 +128,7 @@ server.log("The access token is " + (client.isTokenValid() ? "" : "in") + "valid
 ### Complete Example ###
 
 ```squirrel
-#require "OAuth2.agent.lib.nut:2.0.0
+#require "OAuth2.agent.lib.nut:2.0.1
 
 // Substitute with real values
 const GOOGLE_ISS        = "rsalambda@quick-cacao-168121.iam.gserviceaccount.com";
@@ -232,7 +232,7 @@ The *notifyUserCallback* function should have the following parameters:
 
 #### Return Value ####
 
-String &mdash; `null` in the case of success, or an error message if the client is already performing a request and the *force* directive is set. 
+String &mdash; `null` in the case of success, or an error message if the client is already performing a request and the *force* directive is set.
 
 #### Example ####
 
@@ -305,7 +305,7 @@ server.log("The client is " + (client.isAuthorized() ?  "" : "un") + "authorized
 
 ### refreshAccessToken(*tokenReadyCallback*) ###
 
-This method asynchronously refreshes the access token and invokes the callback function when this has been completed or an error occurs. 
+This method asynchronously refreshes the access token and invokes the callback function when this has been completed or an error occurs.
 
 #### Parameters ####
 
@@ -342,7 +342,7 @@ client.refreshAccessToken(
 ### Complete Example ###
 
 ```squirrel
-#require "OAuth2.agent.lib.nut:2.0.0
+#require "OAuth2.agent.lib.nut:2.0.1
 
 // Fill CLIENT_ID and CLIENT_SECRET with correct values
 local userConfig = { "clientId"     : "<CLIENT_ID>",

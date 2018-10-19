@@ -40,7 +40,7 @@ enum Oauth2DeviceFlowState {
 
 // The class that introduces OAuth2 namespace
 class OAuth2 {
-    static VERSION = "2.0.0";
+    static VERSION = "2.0.1";
 }
 
 // The class that represents OAuth 2.0 authorization flow
