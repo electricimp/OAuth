@@ -11,6 +11,10 @@ The library exposes retrieved access tokens for applications and hides provider-
 
 **To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.1"` **to the top of your agent code.**
 
+## Examples ## 
+
+A complete, step-by-step recipe can be found in the [examples](./examples) folder.
+
 ## OAuth2.JWTProfile.Client ##
 
 This class implements an OAuth 2.0 client flow using a JSON Web Token (JWT) as the means for requesting access tokens and for client authentication.
