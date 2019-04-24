@@ -1,7 +1,5 @@
 # OAuth 2.0 #
 
-[![Build Status](https://api.travis-ci.org/electricimp/OAuth-2.0.svg?branch=master)](https://travis-ci.org/electricimp/OAuth-2.0)
-
 This library provides OAuth 2.0 authentication and authorization flows. It supports the following flows:
 
 - [OAuth2.JWTProfile.Client](#oauth2jwtprofileclient) &mdash; OAuth 2.0 with the JSON Web Token (JWT) Profile for Client Authentication and Authorization Grants as defined in [IETF RFC 7523](https://tools.ietf.org/html/rfc7523).
@@ -10,6 +8,8 @@ This library provides OAuth 2.0 authentication and authorization flows. It suppo
 The library exposes retrieved access tokens for applications and hides provider-specific operations, including the renewal of expired tokens.
 
 **To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.1"` **to the top of your agent code.**
+
+![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:OAuth2_BuildAndTest)/statusIcon)
 
 ## Examples ## 
 
