@@ -88,7 +88,7 @@ Now set the example code configuration parameters with values retrieved during t
 
 Parameter             | Description
 ----------------------| -----------
-CLIENT_ID  			      | Google [Client ID](#creating-google-client-credentials)
+CLIENT_ID  			  | Google [Client ID](#creating-google-client-credentials)
 CLIENT_SECRET         | Google [Client Secret](#creating-google-client-credentials)
 
 **Note** As the sample code includes the private key verbatim in the source, it should be treated carefully, and not checked into version control.

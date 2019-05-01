@@ -1,7 +1,5 @@
 # OAuth 2.0 #
 
-[![Build Status](https://api.travis-ci.org/electricimp/OAuth-2.0.svg?branch=master)](https://travis-ci.org/electricimp/OAuth-2.0)
-
 This library provides OAuth 2.0 authentication and authorization flows. It supports the following flows:
 
 - [OAuth2.JWTProfile.Client](#oauth2jwtprofileclient) &mdash; OAuth 2.0 with the JSON Web Token (JWT) Profile for Client Authentication and Authorization Grants as defined in [IETF RFC 7523](https://tools.ietf.org/html/rfc7523).
@@ -10,6 +8,8 @@ This library provides OAuth 2.0 authentication and authorization flows. It suppo
 The library exposes retrieved access tokens for applications and hides provider-specific operations, including the renewal of expired tokens.
 
 **To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.1"` **to the top of your agent code.**
+
+![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:OAuth2_BuildAndTest)/statusIcon)
 
 ## Examples ## 
 
@@ -84,14 +84,14 @@ Nothing.
 
 ```squirrel
 client.acquireAccessToken(
-  // The token ready callback
-  function(token, error) {
-    if (error) {
-      server.error(error);
-    } else {
-      server.log("The access token has the value: " + token);
+    // The token ready callback
+    function(token, error) {
+        if (error) {
+            server.error(error);
+        } else {
+            server.log("The access token has the value: " + token);
+        }
     }
-  }
 );
 ```
 
@@ -109,9 +109,9 @@ String &mdash; the access token, or `null`.
 local token = client.getValidAccessTokenOrNull();
 
 if (token) {
-  server.log("The access token is valid and has the value: " + token);
+    server.log("The access token is valid and has the value: " + token);
 } else {
-  server.log("The access token has either expired or the client is not authorized");
+    server.log("The access token has either expired or the client is not authorized");
 }
 ```
 
@@ -148,19 +148,19 @@ local client = OAuth2.JWTProfile.Client(providerSettings, userSettings);
 
 local token = client.getValidAccessTokenOrNull();
 if (token != null) {
-  // We have a valid token already
-  server.log("Valid access token is: " + token);
+    // We have a valid token already
+    server.log("Valid access token is: " + token);
 } else {
-  // Acquire a new access token
-  client.acquireAccessToken(
-    function(newToken, err) {
-      if (err) {
-        server.error("Token acquisition error: " + err);
-      } else {
-        server.log("Received a new token: " + newToken);
-      }
-    }
-  );
+    // Acquire a new access token
+    client.acquireAccessToken(
+        function(newToken, err) {
+            if (err) {
+                server.error("Token acquisition error: " + err);
+            } else {
+                server.log("Received a new token: " + newToken);
+            }
+        }
+    );
 }
 ```
 
@@ -242,20 +242,20 @@ String &mdash; `null` in the case of success, or an error message if the client 
 
 ```squirrel
 client.acquireAccessToken(
-  // Token Ready Callback
-  function(token, error) {
-    if (error) {
-      server.error("Token retrieval error: " + error);
-    } else {
-      server.log("The access token: " + token);
+    // Token Ready Callback
+    function(token, error) {
+        if (error) {
+            server.error("Token retrieval error: " + error);
+        } else {
+            server.log("The access token: " + token);
+        }
+    },
+    // User notification callback
+    function(url, code) {
+        server.log("Authorization is pending. Please grant access");
+        server.log("URL: " + url);
+        server.log("Code: " + code);
     }
-  },
-  // User notification callback
-  function(url, code) {
-    server.log("Authorization is pending. Please grant access");
-    server.log("URL: " + url);
-    server.log("Code: " + code);
-  }
 );
 ```
 
@@ -273,9 +273,9 @@ String &mdash; an existing valid access token, or `null`.
 local token = client.getValidAccessTokenOrNull();
 
 if (token) {
-  server.log("Token is valid: " + token);
+    server.log("Token is valid: " + token);
 } else {
-  server.log("Token has expired or client is not authorized");
+    server.log("Token has expired or client is not authorized");
 }
 ```
 
@@ -332,14 +332,14 @@ Nothing.
 
 ```squirrel
 client.refreshAccessToken(
-  // Token Ready Callback
-  function(token, error) {
-    if (error) {
-      server.error("Token refresh error: " + error);
-    } else {
-      server.log("The access token has been refreshed. It has the value: " + token);
+    // Token Ready Callback
+    function(token, error) {
+        if (error) {
+            server.error("Token refresh error: " + error);
+        } else {
+            server.log("The access token has been refreshed. It has the value: " + token);
+        }
     }
-  }
 );
 ```
 
@@ -359,32 +359,32 @@ client <- OAuth2.DeviceFlow.Client(OAuth2.DeviceFlow.GOOGLE, userConfig);
 local token = client.getValidAccessTokenOrNull();
 
 if (token != null) {
-  server.log("Valid access token is: " + token);
+    server.log("Valid access token is: " + token);
 } else {
-  // Acquire a new access token
-  local error = client.acquireAccessToken(
-    // Token received callback function
-    function(response, error) {
-      if (error) {
-        server.error("Token acquisition error: " + error);
-      } else {
-        server.log("Received token: " + response);
-      }
-    },
-    // User notification callback function
-    function(url, code) {
-      server.log("Authorization is pending. Please grant access");
-      server.log("URL: " + url);
-      server.log("Code: " + code);
-    }
-  );
+    // Acquire a new access token
+    local error = client.acquireAccessToken(
+        // Token received callback function
+        function(response, error) {
+            if (error) {
+                server.error("Token acquisition error: " + error);
+            } else {
+                server.log("Received token: " + response);
+            }
+        },
+        // User notification callback function
+        function(url, code) {
+            server.log("Authorization is pending. Please grant access");
+            server.log("URL: " + url);
+            server.log("Code: " + code);
+        }
+    );
 
-  if (error != null) server.error("Client is already performing request (" + error + ")");
+    if (error != null) server.error("Client is already performing request (" + error + ")");
 }
 ```
 
 **Note** The DeviceFlow Client was verified and tested using the Google [Firebase](https://firebase.google.com) authorization flow.
 
-# License #
+## License ##
 
-The OAuth library is licensed under the [MIT License](LICENSE).
+This library is licensed under the [MIT License](LICENSE).
