@@ -43,26 +43,26 @@ class GooglePubSubJWTAuth extends ImpTestCase {
 
     function verifyToken(token, success, failure, doRefresh = false) {
         try {
-            server.log("VerifyTokenTest: checking token");
+            info("VerifyTokenTest: checking token");
             local query = http.urlencode({"access_token" : token });
-            server.log("VerifyTokenTest: token query is: " + query);
+            info("VerifyTokenTest: token query is: " + query);
             http.post(TOKEN_VERIFICATION_URL + "?" + query, {}, "")
                 .sendasync(function (resp) {
                     local status = resp.statuscode;
-                    server.log("VerifyTokenTest: status is: " + status);
+                    info("VerifyTokenTest: status is: " + status);
                     local body = resp.body;
-                    server.log("VerifyTokenTest: body is: " + body);
+                    info("VerifyTokenTest: body is: " + body);
                     if (200 != status) {
                         failure("Verification server returns NOT OK");
                     } else {
                         if (doRefresh) {
                             local res = _auth.acquireAccessToken(function(token, err) {
-                                server.log("VerifyTokenTest_refresh: callback involved");
+                                info("VerifyTokenTest_refresh: callback involved");
                                 if (null != err) {
-                                    server.log("VerifyTokenTest_refresh: err != null: " + err);
+                                    info("VerifyTokenTest_refresh: err != null: " + err);
                                     failure(err);
                                 } else {
-                                    server.log("VerifyTokenTest_refresh: going to check token");
+                                    info("VerifyTokenTest_refresh: going to check token");
                                     verifyToken(token, success, failure);
                                 }
                             }.bindenv(this));
@@ -82,16 +82,16 @@ class GooglePubSubJWTAuth extends ImpTestCase {
 
             local token = _auth.getValidAccessTokenOrNull();
             if (null != token) {
-                server.log("VerifyTokenTest: it was not null!. something went wrong!");
+                info("VerifyTokenTest: it was not null!. something went wrong!");
                 failure("Initial token is not null");
             } else {
                 local err = _auth.acquireAccessToken(function(token, err) {
-                    server.log("VerifyTokenTest: callback involved");
+                    info("VerifyTokenTest: callback involved");
                     if (null != err) {
-                        server.log("VerifyTokenTest: err != null: " + err);
+                        info("VerifyTokenTest: err != null: " + err);
                         failure(err);
                     } else {
-                        server.log("VerifyTokenTest: going to check token");
+                        info("VerifyTokenTest: going to check token");
                         verifyToken(token, success, failure, true);
                     }
                 }.bindenv(this));
