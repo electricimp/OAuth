@@ -259,6 +259,7 @@ class  OAuth2.JWTProfile {
                     // Cache the new token, pull in the expiry a little just in case
                     local response = http.jsondecode(resp.body);
                     local err = client._extractToken(response);
+                    if (err != null) throw err;
                     client._triggerTokenReadyCb(client._accessToken, err, resp, userCallback);
                 } catch(e) {
                     local err = "Error parsing http response: " + e;
