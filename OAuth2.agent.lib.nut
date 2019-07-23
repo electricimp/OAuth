@@ -771,7 +771,9 @@ class OAuth2.DeviceFlow {
                     } else if (err == "slow_down") {
                         _log("Polling error: " + err);
                         _pollTime *= 2;
-                        imp.wakeup(_pollTime, _poll.bindenv(this));
+                        imp.wakeup(_pollTime, function() {
+                            _poll(cb);
+                        }.bindenv(this));
                     } else {
                         // All other errors pass to application
                         // params: token, err, http resp, cb, reset, additional err log msg
