@@ -210,7 +210,7 @@ The third parameter, *configSettings*, is optional: it can take a table containi
 | *configSettings*&nbsp;Key | Type | Required? | Description |
 | --- | --- | --- | --- |
 | *includeResp* | Boolean | No | Whether to include the HTTP response in the token ready callback. Default: `false` |
-| *enLogging* | Boolean | No | Whether to enable debug logging. Default: `false` |
+| *enLogging* | Boolean | No | Whether to enable debug logging. Default: `true` |
 | *addReqCodeData* | Table | No | A table containing key-value pairs to be included in HTTP requests to obtain a device authorization code. In most cases this should not be needed. Default: `null` |
 
 #### Example ####
