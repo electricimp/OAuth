@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright 2017 Electric Imp
+// Copyright 2017-19 Electric Imp
 //
 // SPDX-License-Identifier: MIT
 //
@@ -40,7 +40,7 @@ enum Oauth2DeviceFlowState {
 };
 
 /**
- * The agent-side library for OAuth 2.0 authentication and authorization flows. 
+ * The agent-side library for OAuth 2.0 authentication and authorization flows.
  *
  * @class
  */
@@ -56,9 +56,9 @@ class OAuth2 {
 class  OAuth2.JWTProfile {
 
     /**
-    * OAuth 2.0 sub-class that provides OAuth 2.0 with the JSON Web Token (JWT) profile 
-    *   for Client Authentication and Authorization Grants as defined in 
-    *   IETF RFC 7523 (https://tools.ietf.org/html/rfc7523). 
+    * OAuth 2.0 sub-class that provides OAuth 2.0 with the JSON Web Token (JWT) profile
+    *   for Client Authentication and Authorization Grants as defined in
+    *   IETF RFC 7523 (https://tools.ietf.org/html/rfc7523).
     *
     * @class
     */
@@ -89,7 +89,7 @@ class  OAuth2.JWTProfile {
 
         /**
         * Initializes JWT Client
-        * @param {ProviderConfig} provider - a table with OAuth2 provider configuration 
+        * @param {ProviderConfig} provider - a table with OAuth2 provider configuration
         * @param {ClientParams}   user     - a table of client specific parameters
         * @param {ConfigSettings} settings - Optional, a table of settings for the JWT Client class
         */
@@ -106,7 +106,7 @@ class  OAuth2.JWTProfile {
         */
         /**
         * @typedef {table} ConfigSettings   - a table with class configuration settings
-        * @property {boolean} [includeResp] - Optional, whether to include HTTP response in 
+        * @property {boolean} [includeResp] - Optional, whether to include HTTP response in
         *   TokenReadyCallback parameters, defaults to false
         * @property {boolean} [enLogging]   - Optional, whether to enable debug logging, defaults to false
         */
@@ -123,13 +123,13 @@ class  OAuth2.JWTProfile {
             _iss = user.iss;
             _jwtSignKey = user.jwtSignKey;
 
-            /** 
+            /**
             * Mandatory field but GOOGLE skips it. From RFC 7523 docs - For client
-            *   authentication, the subject MUST be the "client_id" of the OAuth client 
+            *   authentication, the subject MUST be the "client_id" of the OAuth client
             */
             _sub = ("sub" in user) ? user.sub : _iss;
 
-            /** 
+            /**
             * From RFC 6749 docs - If the client omits the scope parameter when requesting
             *   authorization, the authorization server MUST either process the request using
             *   a pre-defined default value or fail the request indicating an invalid scope
@@ -142,8 +142,8 @@ class  OAuth2.JWTProfile {
 
         /**
         * Non-blocking way to retrieve access token, if access token is valid
-        * 
-        * @return {string/null} Access token or null if client is not authorized or 
+        *
+        * @return {string/null} Access token or null if client is not authorized or
         *   token is expired
         */
         function getValidAccessTokenOrNull() {
@@ -152,7 +152,7 @@ class  OAuth2.JWTProfile {
 
         /**
         * Check if access token is valid
-        * 
+        *
         * @return {boolean} if access token is valid
         */
         function isTokenValid() {
@@ -161,17 +161,17 @@ class  OAuth2.JWTProfile {
 
         /**
         * Starts access token acquisition procedure
-        * 
-        * @param {TokenReadyCallback} tokenReadyCallback - a function that is triggered   
-        *   when the access token is aquired, takes 3 parameters. 
+        *
+        * @param {TokenReadyCallback} tokenReadyCallback - a function that is triggered
+        *   when the access token is aquired, takes 3 parameters.
         */
         /**
-        * The callback function that is triggered when an access token is aquired or an error 
+        * The callback function that is triggered when an access token is aquired or an error
         *   is encountered
         *
         * @callback TokenReadyCallback
         * @param {string/null} token - an access token, or null if an error was encountered
-        * @param {string/null} error - null if no error was encountered or a string containing 
+        * @param {string/null} error - null if no error was encountered or a string containing
         *   a description of the error
         * @param {string/null} response - the http response, or null if no response body is available
         */
@@ -182,7 +182,7 @@ class  OAuth2.JWTProfile {
                 return;
             }
 
-            local now = time();            
+            local now = time();
             local claimset = {
                 "iss"   : _iss,
                 "sub"   : _sub,
@@ -238,7 +238,7 @@ class  OAuth2.JWTProfile {
 
         // -------------------- PRIVATE METHODS -------------------- //
 
-        // Helper, triggers token ready callback with or without HTTP response depending 
+        // Helper, triggers token ready callback with or without HTTP response depending
         // on settings
         function _triggerTokenReadyCb(token, err, httpResp, cb) {
             if (_includeResp) {
@@ -337,8 +337,8 @@ class  OAuth2.JWTProfile {
 }
 
 /**
- * OAuth 2.0 sub-class that provides authorization flow for browserless and 
- *  input constrained devices. 
+ * OAuth 2.0 sub-class that provides authorization flow for browserless and
+ *  input constrained devices.
  *  https://tools.ietf.org/html/draft-ietf-oauth-device-flow-05
  *
  * @class
@@ -355,7 +355,7 @@ class OAuth2.DeviceFlow {
     };
 
     /**
-    * OAuth 2.0 sub-class that provides OAuth 2.0 Device Flow Client role. 
+    * OAuth 2.0 sub-class that provides OAuth 2.0 Device Flow Client role.
     *
     * @class
     */
@@ -385,22 +385,22 @@ class OAuth2.DeviceFlow {
 
         /** Client password */
         _clientSecret    = null;
-        /** 
+        /**
         * The client identifier.
         *   https://tools.ietf.org/html/rfc6749#section-2.2
         */
         _clientId        = null;
-        /** 
+        /**
         * The scope of the access
         *   https://tools.ietf.org/html/rfc6749#section-3.3
         */
         _scope           = null;
         /**
-        * Used to store additional key/value pairs used in the HTTP request 
+        * Used to store additional key/value pairs used in the HTTP request
         * to retrieve a device authorization code (mainly for Salesforce compatibility)
         */
         _addReqCodeData  = null;
-        /** Boolean if raw HTTP response should be passed to get token callback 
+        /** Boolean if raw HTTP response should be passed to get token callback
         * (mainly for Salesforce compatibility)
         */
         _includeResp     = null;
@@ -417,7 +417,7 @@ class OAuth2.DeviceFlow {
 
         /**
         * Initializes Device Client
-        * @param {ProviderConfig} provider - a table with OAuth2 provider configuration 
+        * @param {ProviderConfig} provider - a table with OAuth2 provider configuration
         * @param {ClientParams}   user     - a table of client specific parameters
         * @param {ConfigSettings} settings - Optional, a table of settings for the Device Client class
         */
@@ -435,7 +435,7 @@ class OAuth2.DeviceFlow {
         */
         /**
         * @typedef {table} ConfigSettings   - a table with class configuration settings
-        * @property {boolean} [includeResp] - Optional, whether to include HTTP response in 
+        * @property {boolean} [includeResp] - Optional, whether to include HTTP response in
         *   TokenReadyCallback parameters, defaults to false
         * @property {boolean} [debug]       - Optional, whether to enable debug logging, defaults to true
         */
@@ -452,7 +452,7 @@ class OAuth2.DeviceFlow {
                 throw "Invalid Config";
             }
             _clientId = params.clientId;
-            /** 
+            /**
             * From RFC 6749 docs - If the client omits the scope parameter when requesting
             *   authorization, the authorization server MUST either process the request using
             *   a pre-defined default value or fail the request indicating an invalid scope
@@ -468,8 +468,8 @@ class OAuth2.DeviceFlow {
 
         /**
         * Non-blocking way to retrieve access token, if token is authorized and valid
-        * 
-        * @return {string/null} Access token or null if client is not authorized or 
+        *
+        * @return {string/null} Access token or null if client is not authorized or
         *   token is expired
         */
         function getValidAccessTokenOrNull() {
@@ -478,7 +478,7 @@ class OAuth2.DeviceFlow {
 
         /**
         * Check if access token is valid
-        * 
+        *
         * @return {boolean} if access token is valid
         */
         function isTokenValid() {
@@ -487,7 +487,7 @@ class OAuth2.DeviceFlow {
 
         /**
         * Check if access token is authorized and able to refresh expired access token
-        * 
+        *
         * @return {boolean} if access token is authorized
         */
         function isAuthorized() {
@@ -497,26 +497,26 @@ class OAuth2.DeviceFlow {
         /**
         * Starts access token acquisition procedure. Depending on Client state may start
         * full client authorization procedure or just a token refresh
-        * 
-        * @param {TokenReadyCallback} tokenReadyCallback - a function that is triggered   
-        *   when the access token is aquired or on error, takes 3 parameters. 
-        * @param {NotifyUserCallback} notifyUserCallback - a function that is triggered   
-        *   when user action is required, takes 2 parameters. 
         *
-        * @param {boolean} - force, Optional, whether to start new acquisition procedure even if 
+        * @param {TokenReadyCallback} tokenReadyCallback - a function that is triggered
+        *   when the access token is aquired or on error, takes 3 parameters.
+        * @param {NotifyUserCallback} notifyUserCallback - a function that is triggered
+        *   when user action is required, takes 2 parameters.
+        *
+        * @param {boolean} - force, Optional, whether to start new acquisition procedure even if
         *   previous request is not complete. Defaults to false.
         *
-        * @return {string/null} - Null if no error was encountered, otherwise a string with 
-        *   a description of the error (ie an authorization is already in progress, and force 
+        * @return {string/null} - Null if no error was encountered, otherwise a string with
+        *   a description of the error (ie an authorization is already in progress, and force
         *   flag is set to false)
         */
         /**
-        * The callback function that is triggered when an access token is aquired or an error 
-        *   is encountered. 
+        * The callback function that is triggered when an access token is aquired or an error
+        *   is encountered.
         *
         * @callback TokenReadyCallback
         * @param {string/null} token - an access token, or null if an error was encountered
-        * @param {string/null} error - null if no error was encountered or a string containing 
+        * @param {string/null} error - null if no error was encountered or a string containing
         *   a description of the error
         * @param {string/null} response - the http response, or null if no response body is available
         */
@@ -527,7 +527,7 @@ class OAuth2.DeviceFlow {
         * @callback NotifyUserCallback
         * @param {string} verification_uri - the URI the user will need for client authorization
         * @param {string} user_code - the code the user will need to enter that will be sent to the
-        *   authorization server. 
+        *   authorization server.
         */
         function acquireAccessToken(tokenReadyCallback, notifyUserCallback, force = false) {
             if (_isBusy() && !force) return "Token request is ongoing";
@@ -546,20 +546,20 @@ class OAuth2.DeviceFlow {
 
         /**
         * Starts refresh token procedure.
-        * 
-        * @param {TokenReadyCallback} cb - a function that is triggered   
-        *   when the access token is aquired or on error, takes 3 parameters. 
         *
-        * @return {string/null} - Null if no error was encountered, otherwise a string with 
+        * @param {TokenReadyCallback} cb - a function that is triggered
+        *   when the access token is aquired or on error, takes 3 parameters.
+        *
+        * @return {string/null} - Null if no error was encountered, otherwise a string with
         *   a description of the error
         */
         /**
-        * The callback function that is triggered when an access token is aquired or an error 
-        *   is encountered. 
+        * The callback function that is triggered when an access token is aquired or an error
+        *   is encountered.
         *
         * @callback TokenReadyCallback
         * @param {string/null} token - an access token, or null if an error was encountered
-        * @param {string/null} error - null if no error was encountered or a string containing 
+        * @param {string/null} error - null if no error was encountered or a string containing
         *   a description of the error
         * @param {string/null} response - the http response, or null if no response body is available
         */
@@ -590,7 +590,7 @@ class OAuth2.DeviceFlow {
 
         // -------------------- PRIVATE METHODS -------------------- //
 
-        // Helper, triggers token ready callback with or without HTTP response depending 
+        // Helper, triggers token ready callback with or without HTTP response depending
         // on settings
         function _triggerTokenReadyCb(token, err, httpResp, cb, reset = false, msg = null) {
             if (reset) _reset();
@@ -659,7 +659,7 @@ class OAuth2.DeviceFlow {
                 local respData = http.jsondecode(resp.body);
 
                 if (_extractPollData(respData) != null) {
-                    // No URL/Code, response from server did not included required 
+                    // No URL/Code, response from server did not included required
                     // info for user to authenticate device
 
                     // params: token, err, http resp, cb, reset, additional err log msg
@@ -843,7 +843,7 @@ class OAuth2.DeviceFlow {
         //      error description if the table doesn't contain required keys,
         //      Null otherwise
         function _extractPollData(respData) {
-            // NOTE: Accept either url or uri for verification 
+            // NOTE: Accept either url or uri for verification
             local url = null;
             if ("verification_url" in respData) url = respData.verification_url;
             if ("verification_uri" in respData) url = respData.verification_uri;
@@ -860,7 +860,7 @@ class OAuth2.DeviceFlow {
             local now = time();
             if ("interval" in respData) _pollTime = respData.interval;
             _expiresAt = ("expires_in" in respData) ? respData.expires_in + now : now + OAUTH2_DEFAULT_POLL_TIME_SEC;
-            
+
             return null;
         }
 
@@ -910,7 +910,7 @@ class OAuth2.DeviceFlow {
                 case Oauth2DeviceFlowState.REQUEST_CODE:
                     return "requesting code";
                 case Oauth2DeviceFlowState.WAIT_USER:
-                    return "waiting for user";                
+                    return "waiting for user";
                 case Oauth2DeviceFlowState.REFRESH_TOKEN:
                     return "token refreshed";
             }
