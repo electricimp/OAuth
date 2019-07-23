@@ -45,13 +45,15 @@ class GooglePubSubJWTAuth extends ImpTestCase {
         try {
             info("VerifyTokenTest: checking token");
             local query = http.urlencode({"access_token" : token });
-            info("VerifyTokenTest: token query is: " + query);
+            // Don't include token in testing logs
+            server.log("VerifyTokenTest: token query is: " + query);
             http.post(TOKEN_VERIFICATION_URL + "?" + query, {}, "")
                 .sendasync(function (resp) {
                     local status = resp.statuscode;
                     info("VerifyTokenTest: status is: " + status);
                     local body = resp.body;
-                    info("VerifyTokenTest: body is: " + body);
+                    // For debugging only - Don't include token in testing logs
+                    server.log("VerifyTokenTest: body is: " + body);
                     if (200 != status) {
                         failure("Verification server returns NOT OK");
                     } else {

@@ -7,7 +7,7 @@ This library provides OAuth 2.0 authentication and authorization flows. It suppo
 
 The library exposes retrieved access tokens for applications and hides provider-specific operations, including the renewal of expired tokens.
 
-**To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.0.1"` **to the top of your agent code.**
+**To add this library to your project, add** `#require "OAuth2.agent.lib.nut:2.1.0"` **to the top of your agent code.**
 
 ![Build Status](https://cse-ci.electricimp.com/app/rest/builds/buildType:(id:OAuth2_BuildAndTest)/statusIcon)
 
@@ -21,7 +21,7 @@ This class implements an OAuth 2.0 client flow using a JSON Web Token (JWT) as t
 
 ## OAuth2.JWTProfile.Client Usage ##
 
-### constructor(*providerSettings, userSettings*) ###
+### constructor(*providerSettings, userSettings[, configSettings]*) ###
 
 The constructor creates an instance of the *OAuth2.JWTProfile.Client* class. The first parameter, *providerSettings*, is a table that contains provider-specific settings:
 
@@ -34,15 +34,22 @@ The second parameter, *userSettings*, defines a table with user- and application
 | *userSettings* Key | Type | Required | Description |
 | --- | --- | --- | --- |
 | *iss* | String | Yes | The JWT issuer |
-| *scope* | String | Yes | A scope. Scopes enable your application to request access only to the resources that it needs while also enabling users to control the amount of access that they grant to your application |
 | *jwtSignKey* | String | Yes | A JWT sign secret key |
+| *scope* | String | No | A scope. Scopes enable your application to request access only to the resources that it needs while also enabling users to control the amount of access that they grant to your application. Unless the authorization server has a pre-configured scope, requests should include a scope. |
 | *sub* | String | No | The subject of the JWT. Google seems to ignore this field (Default: the value of *iss*) |
+
+The third parameter, *configSettings*, is an optional table with class configuration settings. If no *configSettings* table is passed in the default settings will be configured:
+
+| *configSettings* Key | Type | Required | Description |
+| --- | --- | --- | --- |
+| *includeResp* | Boolean | No | Whether to include the HTTP response in the token ready callback. Default: `false` |
+| *enLogging* | Boolean | No | Whether to enable debug logging. Default: `false` |
 
 #### JWT Profile Client Creation Example ####
 
 ```squirrel
 // OAuth 2.0 library
-#require "OAuth2.agent.lib.nut:2.0.1"
+#require "OAuth2.agent.lib.nut:2.1.0"
 
 // Substitute with real values
 const GOOGLE_ISS        = "rsalambda@quick-cacao-168121.iam.gserviceaccount.com";
@@ -69,12 +76,13 @@ This method begins the access-token acquisition procedure. It invokes the provid
 | --- | --- | --- | --- |
 | *tokenReadyCallback* | Function | Yes | Called when the token is ready for use |
 
-The function passed into *tokenReadyCallback* should have two parameters of its own:
+The function passed into *tokenReadyCallback* should have either two or three parameters of its own based on the constructor's configSettings *includeResp* flag:
 
 | Parameter | Type | Description |
 | --- | --- | --- |
 | *token* | String | The access token |
 | *error* | String | Error details, or `null` in the case of success |
+| *resp*  | Table  | Only present if *includeResp* flag is set to true. An HTTP response table with keys *statuscode*, *headers* and *body*, or `null` if no HTTP response is available | 
 
 #### Return Value ####
 
@@ -132,7 +140,7 @@ server.log("The access token is " + (client.isTokenValid() ? "" : "in") + "valid
 ### Complete Example ###
 
 ```squirrel
-#require "OAuth2.agent.lib.nut:2.0.1
+#require "OAuth2.agent.lib.nut:2.1.0"
 
 // Substitute with real values
 const GOOGLE_ISS        = "rsalambda@quick-cacao-168121.iam.gserviceaccount.com";
@@ -172,7 +180,7 @@ This class implements an OAuth 2.0 authorization flow for browserless and/or inp
 
 ## OAuth2.DeviceFlow.Client Usage ##
 
-### constructor(*providerSettings, userSettings*) ###
+### constructor(*providerSettings, userSettings[, configSettings]*) ###
 
 This constructor creates an instance of the *OAuth2.DeviceFlow.Client* class. The first parameter, *providerSettings*, is a table that contains provider-specific settings:
 
@@ -190,7 +198,13 @@ The second parameter, *userSettings*, takes a table containing user- and applica
 | *clientSecret* | String | Yes | The project's client secret |
 | *scope* | String | Yes | A scope. Scopes enable your application to only request access to the resources that it needs while also enabling users to control the amount of access that they grant to your application |
 
-The library provides predefined configuration settings for the Google Device Auth flow. These settings are defined in the provider-specific settings map: *OAuth2.DeviceFlow.GOOGLE*. This table provides pre-populated *loginHost, tokenHost* and *grantType* values.
+The third parameter, *configSettings*, is an optional table with class configuration settings. If no *configSettings* table is passed in the default settings will be configured:
+
+| *configSettings* Key | Type | Required | Description |
+| --- | --- | --- | --- |
+| *includeResp* | Boolean | No | Whether to include the HTTP response in the token ready callback. Default: `false` |
+| *enLogging* | Boolean | No | Whether to enable debug logging. Default: `false` |
+| *addReqCodeData* | Table | No | A table containing key/value pairs to be included in HTTP requests to obtain a device authorization code. In most cases this should not be needed. Default: `null` |
 
 #### Device Flow Client Creation Example ####
 
@@ -208,7 +222,7 @@ client <- OAuth2.DeviceFlow.Client(providerSettings, userSettings);
 
 ## OAuth2.DeviceFlow.Client Methods ##
 
-### acquireAccessToken(*tokenReadyCallback, notifyUserCallback, force*) ###
+### acquireAccessToken(*tokenReadyCallback, notifyUserCallback[, force]*) ###
 
 This method begins the access-token acquisition procedure. Depending on the client state, it may start a full client authorization procedure or just refresh a token that has already been acquired. The access token is delivered through the function passed into the *tokenReadyCallback* function.
 
@@ -220,12 +234,13 @@ This method begins the access-token acquisition procedure. Depending on the clie
 | *notifyUserCallback* | Function | Yes | The handler that will be called when user action is required. See [RFE, device flow, section 3.3](https://tools.ietf.org/html/draft-ietf-oauth-device-flow-05#section-3.3) for information on what user action might be needed when this callback is executed. The function’s parameters are described below |
 | *force* | Boolean | No | This flag forces the token acquisition process to start from the beginning even if a previous request has not yet completed. Any previous session will be terminated (Default: `false`) |
 
-The *tokenReadyCallback* function should have the following parameters:
+The function passed into *tokenReadyCallback* should have either two or three parameters of its own based on the constructor's configSettings *includeResp* flag:
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| *token* | String | String representation of the access token |
+| *token* | String | The access token |
 | *error* | String | Error details, or `null` in the case of success |
+| *resp*  | Table  | Only present if *includeResp* flag is set to true. An HTTP response table with keys *statuscode*, *headers* and *body*, or `null` if no HTTP response is available | 
 
 The *notifyUserCallback* function should have the following parameters:
 
@@ -317,12 +332,13 @@ This method asynchronously refreshes the access token and invokes the callback f
 | --- | --- | --- | --- |
 | *tokenReadyCallback* | Function | Yes | Called when the token is ready for use |
 
-The function passed into *tokenReadyCallback* should have two parameters of its own:
+The function passed into *tokenReadyCallback* should have either two or three parameters of its own based on the constructor's configSettings *includeResp* flag:
 
 | Parameter | Type | Description |
 | --- | --- | --- |
 | *token* | String | The access token |
 | *error* | String | Error details, or `null` in the case of success |
+| *resp*  | Table  | Only present if *includeResp* flag is set to true. An HTTP response table with keys *statuscode*, *headers* and *body*, or `null` if no HTTP response is available | 
 
 #### Return Value ####
 
@@ -346,7 +362,7 @@ client.refreshAccessToken(
 ### Complete Example ###
 
 ```squirrel
-#require "OAuth2.agent.lib.nut:2.0.1
+#require "OAuth2.agent.lib.nut:2.1.0"
 
 // Fill CLIENT_ID and CLIENT_SECRET with correct values
 local userConfig = { "clientId"     : "<CLIENT_ID>",

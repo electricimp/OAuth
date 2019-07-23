@@ -22,10 +22,16 @@
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-#require "OAuth2.agent.lib.nut:2.0.1"
+#require "OAuth2.agent.lib.nut:2.1.0"
 
 const CLIENT_ID = "";
 const CLIENT_SECRET = "";
+
+local providerSettings = {
+    "loginHost" : "https://accounts.google.com/o/oauth2/device/code",
+    "tokenHost" : "https://www.googleapis.com/oauth2/v4/token",
+    "grantType" : "http://oauth.net/grant_type/device/1.0"
+}
 
 // Fill CLIENT_ID and CLIENT_SECRET with correct values
 local userConfig = {
@@ -35,7 +41,7 @@ local userConfig = {
 };
 
 // Initializing client with provided Google Firebase config
-client <- OAuth2.DeviceFlow.Client(OAuth2.DeviceFlow.GOOGLE, userConfig);
+client <- OAuth2.DeviceFlow.Client(providerSettings, userConfig);
 
 local token = client.getValidAccessTokenOrNull();
 if (token != null) {

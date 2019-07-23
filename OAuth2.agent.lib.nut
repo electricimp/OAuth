@@ -108,7 +108,7 @@ class  OAuth2.JWTProfile {
         * @typedef {table} ConfigSettings   - a table with class configuration settings
         * @property {boolean} [includeResp] - Optional, whether to include HTTP response in 
         *   TokenReadyCallback parameters, defaults to false
-        * @property {boolean} [debug]       - Optional, whether to enable debug logging, defaults to false
+        * @property {boolean} [enLogging]   - Optional, whether to enable debug logging, defaults to false
         */
         constructor(provider, user, settings = {}) {
              if (!("tokenHost" in provider) ) {
@@ -137,7 +137,7 @@ class  OAuth2.JWTProfile {
             if ("scope" in user) _scope = user.scope;
 
             if ("includeResp" in settings) _includeResp = settings.includeResp;
-            if ("debug" in settings) _debug = settings.debug;
+            if ("enLogging" in settings) _debug = settings.enLogging;
         }
 
         /**
@@ -462,7 +462,7 @@ class OAuth2.DeviceFlow {
             if ("clientSecret" in params) _clientSecret = params.clientSecret;
 
             if ("includeResp" in settings) _includeResp = settings.includeResp;
-            if ("enableLogs" in settings) _debug = settings.enableLogs;
+            if ("enLogging" in settings) _debug = settings.enLogging;
             if ("addReqCodeData" in settings) _addReqCodeData = settings.addReqCodeData;
         };
 
@@ -631,8 +631,6 @@ class OAuth2.DeviceFlow {
             data.client_id <- _clientId;
             if (_scope != null) data.scope <- _scope;
 
-            // NOTE: sf lib needs to add "response_type" to data with _grantType value
-
             _doPostWithHttpCallback(_loginHost, data, _requestCodeCallback,
                                     [tokenCallback, notifyUserCallback]);
             _changeStatus(Oauth2DeviceFlowState.REQUEST_CODE);
@@ -733,8 +731,6 @@ class OAuth2.DeviceFlow {
                 "grant_type"    : _grantType,
             };
             if (_clientSecret != null)  data.client_secret <- _clientSecret;
-
-            // NOTE: SF grant type is "device"
 
             _doPostWithHttpCallback(_tokenHost, data, _doPollCallback, [cb]);
         }
