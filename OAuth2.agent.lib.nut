@@ -721,8 +721,9 @@ class OAuth2.DeviceFlow {
             }
 
             if (time() > _expiresAt) {
+                local err = "Polling error: Timeout acquiring token";
                 // params: token, err, http resp, cb, reset, additional err log msg
-                _triggerTokenReadyCb(null, "Token acquiring timeout", null, cb, true);
+                _triggerTokenReadyCb(null, err, null, cb, true);
                 return err;
             }
 
