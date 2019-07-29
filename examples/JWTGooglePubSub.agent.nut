@@ -23,7 +23,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 
 //@include "../OAuth2.agent.lib.nut"
-#require "OAuth2.agent.lib.nut:2.0.1"
+#require "OAuth2.agent.lib.nut:2.1.0"
 
 const GOOGLE_ISS = "";
 const GOOGLE_SECRET_KEY = "";
